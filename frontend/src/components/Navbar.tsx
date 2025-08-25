@@ -10,10 +10,10 @@ const Navbar: React.FC = () => {
       </div>
       <div className="navbar-menu">
         <input type="text" placeholder="Search blogs, authors, or tags..." className="search-bar" />
-        <button className="icon-button">
+        <button className="icon-button" aria-label="Notifications">
           <FaBell />
         </button>
-        <button className="icon-button">
+        <button className="icon-button" aria-label="Settings">
           <FaCog />
         </button>
       </div>

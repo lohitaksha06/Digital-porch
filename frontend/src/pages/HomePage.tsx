@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import '../styles/main.css';
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="app-container">
       <Navbar />
@@ -16,7 +18,7 @@ const HomePage: React.FC = () => {
           
           <div className="create-blog-section">
             <h2>Have a story to tell?</h2>
-            <Button>Start Now</Button>
+            <Button onClick={() => navigate('/newblog')}>Start Now</Button>
           </div>
 
           <h2 className="blog-section-title">Featured Blogs</h2>

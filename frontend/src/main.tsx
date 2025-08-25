@@ -5,6 +5,7 @@ import App from './App';
 import LoginPage from './pages/login/page';
 import SignupPage from './pages/signup/page';
 import DashboardPage from './pages/dashboard/page';
+import NewBlogPage from './pages/newblog/page';
 import './styles/main.css';
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/dashboard',
     element: <DashboardPage />,
+  },
+  {
+    path: '/newblog',
+    element: <NewBlogPage />,
   },
 ]);
 
