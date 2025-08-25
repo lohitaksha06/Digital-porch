@@ -23,6 +23,12 @@ public class BlogController {
         return blogs.findAll();
     }
 
+    @GetMapping("/search")
+    public List<Blog> search(@RequestParam("q") String q) {
+        if (q == null || q.trim().isEmpty()) return List.of();
+        return blogs.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(q.trim());
+    }
+
     @GetMapping("/me")
     public List<Blog> myBlogs(@RequestHeader(value = "Authorization", required = false) String auth) {
         String email = jwt.getSubjectFromBearer(auth).orElseThrow(() -> new RuntimeException("Unauthorized"));
@@ -38,6 +44,7 @@ public class BlogController {
         b.setTitle(body.getOrDefault("title", ""));
         b.setContent(body.getOrDefault("content", ""));
         b.setTags(body.getOrDefault("tags", ""));
+    b.setImageUrl(body.getOrDefault("imageUrl", null));
         if (b.getTitle().isBlank()) throw new IllegalArgumentException("Title is required");
         blogs.save(b);
         return ResponseEntity.ok(b);
@@ -56,7 +63,8 @@ public class BlogController {
         if (title.isBlank()) throw new IllegalArgumentException("Title is required");
         b.setTitle(title);
         b.setContent(body.getOrDefault("content", b.getContent()));
-        b.setTags(body.getOrDefault("tags", b.getTags()));
+    b.setTags(body.getOrDefault("tags", b.getTags()));
+    b.setImageUrl(body.getOrDefault("imageUrl", b.getImageUrl()));
         blogs.save(b);
         return ResponseEntity.ok(b);
     }

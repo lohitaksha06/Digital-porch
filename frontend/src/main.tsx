@@ -9,6 +9,7 @@ import NewBlogPage from './pages/newblog/page';
 import SettingsPage from './pages/settings/page';
 import DemoBlogPage from './pages/demo/page';
 import ExplorePage from './pages/explore/page';
+import SearchPage from './pages/search/page';
 import './styles/main.css';
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: '/settings',
     element: <SettingsPage />,
+  },
+  {
+    path: '/search',
+    element: <SearchPage />,
   },
   {
     path: '/explore',

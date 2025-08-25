@@ -82,7 +82,10 @@ const HomePage: React.FC = () => {
             <h2 className="section-title">Latest blogs</h2>
             <div className="featured-grid">
         {(allBlogs.length ? allBlogs : myBlogs).slice(0, 8).map((b) => (
-                  <div key={b.id} className="blog-card">
+                   <div key={b.id} className="blog-card">
+                     {b.imageUrl && (
+                       <img src={b.imageUrl} alt="cover" style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 10, marginBottom: 8 }} />
+                     )}
                     <div className="blog-card-header">
           <div className="avatar avatar-sm">{avatarInitial}</div>
                       <div className="blog-meta">
@@ -122,6 +125,9 @@ const HomePage: React.FC = () => {
             <div className="blog-feed">
               {myBlogs.map((b) => (
                 <div className="blog-post-card" key={b.id}>
+                  {b.imageUrl && (
+                    <img src={b.imageUrl} alt="cover" className="card-image" />
+                  )}
                   <div className="card-content">
                     <h3>{b.title}</h3>
                     <p>{(b.content || '').slice(0, 160)}{(b.content || '').length > 160 ? '…' : ''}</p>

@@ -24,6 +24,8 @@ public class Blog {
 
     private Instant createdAt = Instant.now();
 
+    private String imageUrl; // optional cover image
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -36,4 +38,6 @@ public class Blog {
     public void setAuthorEmail(String authorEmail) { this.authorEmail = authorEmail; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

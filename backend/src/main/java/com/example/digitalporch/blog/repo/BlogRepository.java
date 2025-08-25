@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     List<Blog> findByAuthorEmailOrderByCreatedAtDesc(String authorEmail);
+    List<Blog> findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(String query);
 }

@@ -3,6 +3,7 @@ import { FaCog, FaBell, FaSignOutAlt, FaWrench } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/main.css';
 import { clearToken, clearUser } from '../services/api';
+import SearchBar from './SearchBar';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ const Navbar: React.FC = () => {
         <a href="/">Digital Porch</a>
       </div>
       <div className="navbar-menu">
-        <input type="text" placeholder="Search blogs, authors, or tags..." className="search-bar" />
+  <SearchBar onSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`)} />
         <button className="icon-button" aria-label="Notifications">
           <FaBell />
         </button>

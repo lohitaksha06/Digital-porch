@@ -80,7 +80,7 @@ export function clearUser() {
   localStorage.removeItem(USER_KEY);
 }
 
-export type Blog = { id: number; title: string; content: string; tags?: string; createdAt: string };
+export type Blog = { id: number; title: string; content: string; tags?: string; createdAt: string; imageUrl?: string };
 export async function fetchMyBlogs(): Promise<Blog[]> {
   const res = await fetch(`${API_BASE}/api/blogs/me`, { headers: { ...authHeader() } });
   if (!res.ok) return [];
