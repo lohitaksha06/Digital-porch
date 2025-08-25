@@ -1,9 +1,10 @@
+import HomePage from './pages/HomePage';
+import './styles/main.css';
+
 function App() {
   return (
-    <>
-      <h1>Digital Porch</h1>
-    </>
-  )
+    <HomePage />
+  );
 }
 
-export default App
+export default App;
