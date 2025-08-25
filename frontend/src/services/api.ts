@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
+export const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8081';
 
 export type AuthResponse = {
   token: string;
@@ -83,6 +83,12 @@ export function clearUser() {
 export type Blog = { id: number; title: string; content: string; tags?: string; createdAt: string };
 export async function fetchMyBlogs(): Promise<Blog[]> {
   const res = await fetch(`${API_BASE}/api/blogs/me`, { headers: { ...authHeader() } });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function fetchAllBlogs(): Promise<Blog[]> {
+  const res = await fetch(`${API_BASE}/api/blogs`);
   if (!res.ok) return [];
   return res.json();
 }

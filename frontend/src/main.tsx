@@ -7,6 +7,7 @@ import SignupPage from './pages/signup/page';
 import DashboardPage from './pages/dashboard/page';
 import NewBlogPage from './pages/newblog/page';
 import SettingsPage from './pages/settings/page';
+import DemoBlogPage from './pages/demo/page';
 import './styles/main.css';
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: '/settings',
     element: <SettingsPage />,
+  },
+  {
+    path: '/demo/:id',
+    element: <DemoBlogPage />,
   },
 ]);
 

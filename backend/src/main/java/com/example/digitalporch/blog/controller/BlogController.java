@@ -17,6 +17,11 @@ public class BlogController {
 
     public BlogController(BlogRepository blogs, JwtUtil jwt) { this.blogs = blogs; this.jwt = jwt; }
 
+    @GetMapping
+    public List<Blog> all() {
+        return blogs.findAll();
+    }
+
     @GetMapping("/me")
     public List<Blog> myBlogs(@RequestHeader(value = "Authorization", required = false) String auth) {
         String email = jwt.getSubjectFromBearer(auth).orElseThrow(() -> new RuntimeException("Unauthorized"));

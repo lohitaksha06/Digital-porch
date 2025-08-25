@@ -4,15 +4,20 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import '../styles/main.css';
-import { getUser, fetchMyBlogs } from '../services/api';
+import { getUser, fetchMyBlogs, fetchAllBlogs, type Blog } from '../services/api';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [myBlogs, setMyBlogs] = useState<any[]>([]);
+  const [myBlogs, setMyBlogs] = useState<Blog[]>([]);
+  const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
     fetchMyBlogs().then(setMyBlogs).catch(() => setMyBlogs([]));
+    fetchAllBlogs().then(setAllBlogs).catch(() => setAllBlogs([]));
   }, []);
+  const user = getUser();
+  const avatarInitial = (user?.name || 'B').trim().charAt(0).toUpperCase();
+
   return (
     <div className="app-container">
       <Navbar />
@@ -20,10 +25,11 @@ const HomePage: React.FC = () => {
         <Sidebar />
         <div className="content-area">
           <div className="greeting">
+            {(() => { const src = user?.avatarDataUrl || user?.avatarUrl || '/default-avatar.svg'; 
+              return <img className="avatar-md" src={src} alt="avatar" />; })()}
             <h1 style={{ margin: 0 }}>
-              {getUser()?.name ? `Welcome back, ${getUser()!.name}` : 'Welcome to the Digital Porch'}
+              {user?.name ? `Welcome back, ${user.name}` : 'Welcome to the Digital Porch'}
             </h1>
-            {(() => { const u = getUser(); const src = u?.avatarDataUrl || u?.avatarUrl; return src ? <img className="avatar-md" src={src} alt="avatar" /> : null; })()}
           </div>
           <p className="subtitle">A place to share your stories and connect with others.</p>
           
@@ -34,41 +40,77 @@ const HomePage: React.FC = () => {
 
           <h2 className="blog-section-title">Featured Blogs</h2>
           <div className="blog-feed">
-            {/* Placeholder Blog Posts */}
-            <div className="blog-post-card">
-              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Blog post" className="card-image" />
+            {/* Nice placeholder cards */}
+            <div className="blog-post-card" onClick={() => navigate('/demo/1')}>
+              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1170&auto=format&fit=crop" alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>The Art of Storytelling</h3>
                 <p>Discover how to captivate your audience with compelling narratives.</p>
                 <div className="card-footer">
                   <span>By Amelia Chen</span>
-                  <span>June 12, 2024</span>
+                  <span>Tags: writing, creativity</span>
                 </div>
               </div>
             </div>
-            <div className="blog-post-card">
-              <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Blog post" className="card-image" />
+            <div className="blog-post-card" onClick={() => navigate('/demo/2')}>
+              <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1170&auto=format&fit=crop" alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>A Developer's Journey</h3>
-                <p>From "Hello World" to building scalable applications. A tale of perseverance.</p>
+                <p>From "Hello World" to scalable apps. A tale of perseverance.</p>
                 <div className="card-footer">
                   <span>By Ben Carter</span>
-                  <span>May 28, 2024</span>
+                  <span>Tags: dev, tips</span>
                 </div>
               </div>
             </div>
-            <div className="blog-post-card">
-              <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80" alt="Blog post" className="card-image" />
+            <div className="blog-post-card" onClick={() => navigate('/demo/3')}>
+              <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=1172&auto=format&fit=crop" alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>Mindfulness in the Digital Age</h3>
                 <p>Finding balance and focus in a world of constant distractions.</p>
                 <div className="card-footer">
                   <span>By Chloe Davis</span>
-                  <span>April 15, 2024</span>
+                  <span>Tags: life, focus</span>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Latest from DB */}
+          <section className="featured-section">
+            <h2 className="section-title">Latest blogs</h2>
+            <div className="featured-grid">
+        {(allBlogs.length ? allBlogs : myBlogs).slice(0, 8).map((b) => (
+                  <div key={b.id} className="blog-card">
+                    <div className="blog-card-header">
+          <div className="avatar avatar-sm">{avatarInitial}</div>
+                      <div className="blog-meta">
+                        <div className="blog-title">{b.title}</div>
+                        <div className="blog-sub">{new Date(b.createdAt).toLocaleString()}</div>
+                      </div>
+                    </div>
+                    <p className="blog-excerpt">{b.content.length > 140 ? b.content.slice(0, 140) + '…' : b.content}</p>
+                    <div className="tag-row">
+          {b.tags?.split(',').filter(Boolean).slice(0, 3).map((t: string) => (
+                        <span key={t} className="tag">{t.trim()}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {!allBlogs.length && !myBlogs.length && (
+                  <div className="blog-card">
+                    <div className="blog-card-header">
+          <div className="avatar avatar-sm">{avatarInitial}</div>
+                      <div className="blog-meta">
+                        <div className="blog-title">No blogs yet</div>
+                        <div className="blog-sub">Be the first to publish</div>
+                      </div>
+                    </div>
+                    <p className="blog-excerpt">Create your first post from the New Blog page to see it here.</p>
+                  </div>
+                )}
+              </div>
+            </section>
 
           <h2 className="blog-section-title" style={{ marginTop: '3rem' }}>Your Blogs</h2>
           {myBlogs.length === 0 ? (

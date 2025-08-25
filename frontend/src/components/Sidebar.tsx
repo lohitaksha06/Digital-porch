@@ -30,9 +30,10 @@ const Sidebar: React.FC = () => {
         </Link>
       </div>
       <div className="sidebar-menu">
-    {getUser()?.name && (
+        {getUser()?.name && (
           <div className="sidebar-username-row">
-      {(() => { const u = getUser(); const src = u?.avatarDataUrl || u?.avatarUrl; return src ? <img className="avatar-sm" src={src} alt="avatar" /> : null; })()}
+            {(() => { const u = getUser(); const src = u?.avatarDataUrl || u?.avatarUrl; 
+              return src ? <img className="avatar-sm" src={src} alt="avatar" /> : <img className="avatar-sm" src="/default-avatar.svg" alt="avatar" />; })()}
             <div className="sidebar-username">{getUser()!.name}</div>
           </div>
         )}
