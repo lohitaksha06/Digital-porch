@@ -264,6 +264,22 @@ body {
     padding-top: 1rem;
 }
 
+/* Featured grid + compact cards */
+.featured-section { margin-top: 2.5rem; }
+.section-title { font-size: 1.6rem; font-weight: 700; margin: 0 0 1rem; }
+.featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+.blog-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 1rem; }
+.blog-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.blog-meta { display: flex; flex-direction: column; }
+.blog-title { font-weight: 700; color: var(--sidebar-bg); }
+.blog-sub { font-size: 0.85rem; color: #777; }
+.blog-excerpt { font-size: 0.95rem; color: #555; margin: 0.5rem 0 0.75rem; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { display: inline-block; padding: 4px 10px; background: #f3e5f5; color: #6a1b9a; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+
+/* Base avatar for text avatars */
+.avatar { display: inline-flex; align-items: center; justify-content: center; background: #e1d5f0; color: #4a148c; font-weight: 700; }
+
 /* Button Component */
 .btn {
     padding: 0.8rem 1.8rem;
@@ -359,3 +375,13 @@ body {
     gap: 8px; 
     margin-bottom: 1rem; 
 }
+
+/* Explore rows */
+.row-section { margin-top: 2rem; }
+.row-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+.row-title { font-size: 1.4rem; font-weight: 700; }
+.row-scroller { position: relative; }
+.row-scroll { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 1fr); gap: 1rem; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 0.5rem; }
+.row-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: #fff; border: 1px solid var(--border-color); width: 36px; height: 36px; border-radius: 999px; box-shadow: 0 6px 14px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.row-arrow.left { left: -18px; }
+.row-arrow.right { right: -18px; }

@@ -98,15 +98,15 @@ const HomePage: React.FC = () => {
                   </div>
                 ))}
                 {!allBlogs.length && !myBlogs.length && (
-                  <div className="blog-card">
-                    <div className="blog-card-header">
-          <div className="avatar avatar-sm">{avatarInitial}</div>
-                      <div className="blog-meta">
+                  <div style={{ background: '#fff', borderRadius: 12, padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div className="avatar avatar-sm">{avatarInitial}</div>
+                      <div>
                         <div className="blog-title">No blogs yet</div>
                         <div className="blog-sub">Be the first to publish</div>
                       </div>
                     </div>
-                    <p className="blog-excerpt">Create your first post from the New Blog page to see it here.</p>
+                    <p className="blog-excerpt" style={{ marginTop: 8 }}>Create your first post from the New Blog page to see it here.</p>
                   </div>
                 )}
               </div>
