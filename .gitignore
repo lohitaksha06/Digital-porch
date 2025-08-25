@@ -1,6 +1,9 @@
 # Dependencies
-/node_modules
-/frontend/node_modules
+node_modules/
+**/node_modules/
+
+# Java build outputs
+/backend/target/
 
 # Build artifacts
 /frontend/dist

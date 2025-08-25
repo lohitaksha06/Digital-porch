@@ -3,6 +3,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import '../../styles/main.css';
+import { IMAGES } from '../../assets/images';
 
 type Card = { id: string; title: string; sub: string; img: string };
 
@@ -11,11 +12,7 @@ const mk = (n: number, prefix: string): Card[] =>
     id: `${prefix}-${i + 1}`,
     title: `${prefix} ${i + 1}`,
     sub: i % 2 ? '2 min read' : 'by @someone',
-    img: [
-      'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=800&auto=format&fit=crop'
-    ][i % 3]
+  img: IMAGES[i % IMAGES.length]
   }));
 
 const ExplorePage: React.FC = () => {

@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import '../styles/main.css';
+import { IMAGES } from '../assets/images';
 import { getUser, fetchMyBlogs, fetchAllBlogs, type Blog } from '../services/api';
 
 const HomePage: React.FC = () => {
@@ -42,7 +43,7 @@ const HomePage: React.FC = () => {
           <div className="blog-feed">
             {/* Nice placeholder cards */}
             <div className="blog-post-card" onClick={() => navigate('/demo/1')}>
-              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1170&auto=format&fit=crop" alt="Blog post" className="card-image" />
+              <img src={IMAGES[0]} alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>The Art of Storytelling</h3>
                 <p>Discover how to captivate your audience with compelling narratives.</p>
@@ -53,7 +54,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             <div className="blog-post-card" onClick={() => navigate('/demo/2')}>
-              <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1170&auto=format&fit=crop" alt="Blog post" className="card-image" />
+              <img src={IMAGES[1]} alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>A Developer's Journey</h3>
                 <p>From "Hello World" to scalable apps. A tale of perseverance.</p>
@@ -64,7 +65,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             <div className="blog-post-card" onClick={() => navigate('/demo/3')}>
-              <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=1172&auto=format&fit=crop" alt="Blog post" className="card-image" />
+              <img src={IMAGES[2]} alt="Blog post" className="card-image" />
               <div className="card-content">
                 <h3>Mindfulness in the Digital Age</h3>
                 <p>Finding balance and focus in a world of constant distractions.</p>
