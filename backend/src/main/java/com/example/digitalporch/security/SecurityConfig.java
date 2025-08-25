@@ -29,9 +29,13 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/user/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/blogs/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/blogs/**").permitAll()
                 .anyRequest().authenticated()
             .and()
-            .httpBasic(); // placeholder until JWT filter added
+            .httpBasic(); // placeholder
         return http.build();
     }
 

@@ -30,8 +30,11 @@ const Sidebar: React.FC = () => {
         </Link>
       </div>
       <div className="sidebar-menu">
-        {getUser()?.name && (
-          <div className="sidebar-username">{getUser()!.name}</div>
+    {getUser()?.name && (
+          <div className="sidebar-username-row">
+      {(() => { const u = getUser(); const src = u?.avatarDataUrl || u?.avatarUrl; return src ? <img className="avatar-sm" src={src} alt="avatar" /> : null; })()}
+            <div className="sidebar-username">{getUser()!.name}</div>
+          </div>
         )}
         <Link to="/settings" className="menu-item">
           <FaCog className="icon" />

@@ -4,12 +4,23 @@ import { FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import '../../styles/main.css';
+import { authHeader } from '../../services/api';
 
 const NewBlogPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const navigate = useNavigate();
+
+  const publish = async () => {
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8081';
+    const res = await fetch(`${API_BASE}/api/blogs`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeader() },
+      body: JSON.stringify({ title, content, tags })
+    });
+    if (!res.ok) { alert('Publish failed'); return; }
+    navigate('/');
+  };
 
   return (
     <div className="app-container">
@@ -45,7 +56,7 @@ const NewBlogPage: React.FC = () => {
             />
             <div className="editor-actions">
               <button className="btn secondary">Save Draft</button>
-              <button className="btn primary">Publish</button>
+              <button className="btn primary" onClick={publish}>Publish</button>
             </div>
           </div>
         </div>

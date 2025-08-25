@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtUtil {
@@ -21,5 +22,18 @@ public class JwtUtil {
                 .setExpiration(new Date(now.getTime() + expirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Optional<String> getSubjectFromBearer(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return Optional.empty();
+        String token = authHeader.substring(7);
+        try {
+            return Optional.ofNullable(Jwts.parserBuilder().setSigningKey(key).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

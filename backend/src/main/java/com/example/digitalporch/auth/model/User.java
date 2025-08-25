@@ -24,6 +24,12 @@ public class User {
 
     private Instant createdAt = Instant.now();
 
+    private String avatarUrl;
+    @Column(length = 500)
+    private String about;
+    private String gender; // e.g., Male/Female/Non-binary/Prefer not to say
+    private String preferences; // comma-separated blog categories
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -34,4 +40,12 @@ public class User {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public String getAbout() { return about; }
+    public void setAbout(String about) { this.about = about; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+    public String getPreferences() { return preferences; }
+    public void setPreferences(String preferences) { this.preferences = preferences; }
 }

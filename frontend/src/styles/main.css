@@ -286,6 +286,20 @@ body {
     border: 2px solid var(--accent-color);
 }
 
+/* Avatars */
+.avatar-sm { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.avatar-md { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.avatar-lg { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+
+/* Settings */
+.settings-card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.settings-row { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; margin-bottom: 1rem; }
+.settings-fields label { display: block; margin-top: 0.75rem; font-weight: 600; }
+.settings-fields input, .settings-fields select, .settings-card textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 0.4rem; }
+.avatar-upload { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
+.greeting { display: flex; align-items: center; gap: 12px; }
+.sidebar-username-row { display: flex; align-items: center; gap: 10px; padding: 0.75rem 2rem; color: #f3e5f5; }
+
 /* Editor */
 .editor { 
     background: #fff; 

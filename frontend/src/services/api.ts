@@ -54,11 +54,23 @@ export function authHeader(): HeadersInit {
 
 // User profile helpers
 const USER_KEY = 'dp_user';
-export function saveUser(u: { name: string; email: string }) {
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
+export type StoredUser = {
+  name: string;
+  email: string;
+  avatarDataUrl?: string; // base64 data URL
+  avatarUrl?: string; // optional URL
+  gender?: string;
+  about?: string;
+  preferences?: string[];
+};
+
+export function saveUser(u: Partial<StoredUser>) {
+  const prev = getUser();
+  const next: StoredUser = { name: prev?.name || '', email: prev?.email || '', ...prev, ...u } as StoredUser;
+  localStorage.setItem(USER_KEY, JSON.stringify(next));
 }
 
-export function getUser(): { name: string; email: string } | null {
+export function getUser(): StoredUser | null {
   const raw = localStorage.getItem(USER_KEY);
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
@@ -66,4 +78,11 @@ export function getUser(): { name: string; email: string } | null {
 
 export function clearUser() {
   localStorage.removeItem(USER_KEY);
+}
+
+export type Blog = { id: number; title: string; content: string; tags?: string; createdAt: string };
+export async function fetchMyBlogs(): Promise<Blog[]> {
+  const res = await fetch(`${API_BASE}/api/blogs/me`, { headers: { ...authHeader() } });
+  if (!res.ok) return [];
+  return res.json();
 }
