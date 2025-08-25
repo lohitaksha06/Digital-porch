@@ -108,6 +108,13 @@ body {
   color: var(--navbar-bg);
 }
 
+/* Dropdown menu for navbar */
+.menu-wrapper { position: relative; display: inline-block; }
+.dropdown { position: absolute; right: 0; top: 52px; background: #fff; color: var(--text-dark); border-radius: 10px; box-shadow: 0 10px 24px rgba(0,0,0,0.15); min-width: 180px; padding: 0.4rem; z-index: 50; }
+.dropdown-item { width: 100%; display: flex; align-items: center; gap: 10px; padding: 0.75rem 0.9rem; border: none; background: transparent; color: inherit; text-decoration: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.dropdown-item:hover { background: #f3e5f5; }
+.dropdown-item svg { font-size: 16px; }
+
 /* Main Content Layout */
 .main-content {
   display: flex;
@@ -322,4 +329,12 @@ body {
 .editor-actions .btn {
     padding: 0.9rem 2rem;
     font-size: 1rem;
+}
+
+/* Back button styling */
+.back-button { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 1rem; 
 }

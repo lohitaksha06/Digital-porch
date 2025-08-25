@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import Button from '../../components/Button';
 import '../../styles/main.css';
 
 const NewBlogPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
+  const navigate = useNavigate();
 
   return (
     <div className="app-container">
       <Navbar />
       <div className="main-content">
-        <Sidebar />
+        {/* Sidebar removed on create page for a distraction-free editor */}
         <div className="content-area">
+          <Button variant="secondary" className="back-button" onClick={() => navigate('/')}> 
+            <FaArrowLeft /> Back to Home
+          </Button>
+
           <div className="editor">
             <input
               className="editor-title"

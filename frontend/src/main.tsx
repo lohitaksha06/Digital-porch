@@ -6,6 +6,7 @@ import LoginPage from './pages/login/page';
 import SignupPage from './pages/signup/page';
 import DashboardPage from './pages/dashboard/page';
 import NewBlogPage from './pages/newblog/page';
+import SettingsPage from './pages/settings/page';
 import './styles/main.css';
 
 const router = createBrowserRouter([
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: '/newblog',
     element: <NewBlogPage />,
+  },
+  {
+    path: '/settings',
+    element: <SettingsPage />,
   },
 ]);
 
