@@ -1,13 +1,23 @@
 /* Basic Reset & Typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --sidebar-bg: #4a148c; /* Dark Purple */
+  --navbar-bg: #7e57c2; /* Faded Purple */
+  --main-bg: #f3e5f5;   /* Very Light Purple */
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --accent-color: #ab47bc;
+  --border-color: #d1c4e9;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f4f7f6;
-  color: #333;
+  background-color: var(--main-bg);
+  color: var(--text-dark);
 }
 
 /* App Container */
@@ -23,14 +33,15 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--navbar-bg);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-light);
 }
 
 .navbar-brand a {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: var(--text-light);
   text-decoration: none;
 }
 
@@ -41,44 +52,51 @@ body {
 
 .search-bar {
   padding: 0.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   margin-right: 1rem;
+  background-color: #ede7f6;
 }
 
 .nav-button {
   padding: 0.5rem 1rem;
-  border: 1px solid #333;
+  border: 1px solid var(--text-light);
   background-color: transparent;
-  color: #333;
+  color: var(--text-light);
   border-radius: 4px;
   cursor: pointer;
   margin-left: 0.5rem;
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .nav-button.primary {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 .nav-button:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--text-light);
+  color: var(--navbar-bg);
 }
 
 /* Main Content Layout */
 .main-content {
   display: flex;
   flex: 1;
+  overflow: hidden; /* Prevent scrolling at this level */
 }
 
 /* Sidebar */
 .sidebar {
   width: 240px;
-  background-color: #fff;
-  border-right: 1px solid #e0e0e0;
+  background-color: var(--sidebar-bg);
+  color: var(--text-light);
   padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: width 0.3s ease;
 }
 
 .sidebar-menu {
@@ -88,22 +106,140 @@ body {
 
 .menu-item {
   padding: 1rem 2rem;
-  color: #555;
+  color: var(--text-light);
   text-decoration: none;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   transition: background-color 0.3s ease;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.menu-item .icon {
+  font-size: 1.5rem;
 }
 
 .menu-item.active,
 .menu-item:hover {
-  background-color: #f4f7f6;
-  color: #333;
-  font-weight: bold;
+  background-color: var(--accent-color);
 }
 
 /* Content Area */
 .content-area {
   flex: 1;
-  padding: 2rem;
+  padding: 2rem 4rem;
   overflow-y: auto;
+}
+
+.content-area h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.content-area .subtitle {
+    font-size: 1.2rem;
+    color: #6a1b9a;
+    margin-bottom: 4rem;
+    text-align: center;
+}
+
+/* Create Blog Section */
+.create-blog-section {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 2.5rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.create-blog-section h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+/* Blog Section */
+.blog-section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.blog-feed {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+}
+
+.blog-post-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background-color: #e0e0e0;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.card-content h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: var(--sidebar-bg);
+}
+
+.card-content p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #888;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 1rem;
+}
+
+/* Button Component */
+.btn {
+    padding: 0.8rem 1.8rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn.primary {
+    background-color: var(--accent-color);
+    color: var(--text-light);
+}
+
+.btn.secondary {
+    background-color: transparent;
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
 }
