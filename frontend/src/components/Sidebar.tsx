@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome, FaCompass, FaUser, FaCog, FaEnvelope, FaPlus } from 'react-icons/fa';
 import '../styles/main.css';
+import { getUser } from '../services/api';
 
 const Sidebar: React.FC = () => {
   return (
@@ -29,6 +30,9 @@ const Sidebar: React.FC = () => {
         </Link>
       </div>
       <div className="sidebar-menu">
+        {getUser()?.name && (
+          <div className="sidebar-username">{getUser()!.name}</div>
+        )}
         <Link to="/settings" className="menu-item">
           <FaCog className="icon" />
           <span>Settings</span>

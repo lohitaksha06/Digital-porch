@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import '../styles/main.css';
+import { getUser } from '../services/api';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +14,9 @@ const HomePage: React.FC = () => {
       <div className="main-content">
         <Sidebar />
         <div className="content-area">
-          <h1>Welcome to the Digital Porch</h1>
+          <h1>
+            {getUser()?.name ? `Welcome back, ${getUser()!.name}` : 'Welcome to the Digital Porch'}
+          </h1>
           <p className="subtitle">A place to share your stories and connect with others.</p>
           
           <div className="create-blog-section">

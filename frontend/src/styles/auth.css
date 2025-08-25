@@ -47,6 +47,16 @@
   margin-top: 0.5rem;
 }
 
+.auth-error {
+  background: #ffe5e5;
+  color: #a40000;
+  border: 1px solid #ffb3b3;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
 .auth-card span {
   color: #555;
 }

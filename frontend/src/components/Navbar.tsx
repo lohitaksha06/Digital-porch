@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaCog, FaBell, FaSignOutAlt, FaWrench } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/main.css';
+import { clearToken, clearUser } from '../services/api';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -19,7 +20,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   const logout = () => {
-    // TODO: clear auth when backend is ready
+  clearToken();
+  clearUser();
     setOpen(false);
     navigate('/login');
   };
