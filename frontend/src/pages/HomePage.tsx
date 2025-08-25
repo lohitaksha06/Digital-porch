@@ -129,6 +129,21 @@ const HomePage: React.FC = () => {
                       <span>{new Date(b.createdAt).toLocaleDateString()}</span>
                       <span>{b.tags}</span>
                     </div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                      <button className="btn secondary" onClick={async () => {
+                        const title = prompt('Edit title', b.title);
+                        if (!title) return;
+                        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8081';
+                        const res = await fetch(`${API_BASE}/api/blogs/${b.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...((await import('../services/api')).authHeader()) }, body: JSON.stringify({ title }) });
+                        if (res.ok) { const updated = await res.json(); setMyBlogs((prev) => prev.map(x => x.id === b.id ? updated : x)); } else { alert('Update failed'); }
+                      }}>Edit</button>
+                      <button className="btn secondary" onClick={async () => {
+                        if (!confirm('Delete this post?')) return;
+                        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8081';
+                        const res = await fetch(`${API_BASE}/api/blogs/${b.id}`, { method: 'DELETE', headers: { ...((await import('../services/api')).authHeader()) } });
+                        if (res.ok || res.status === 204) { setMyBlogs((prev) => prev.filter(x => x.id !== b.id)); } else { alert('Delete failed'); }
+                      }}>Delete</button>
+                    </div>
                   </div>
                 </div>
               ))}
