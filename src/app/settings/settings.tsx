@@ -4,52 +4,85 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import Button from '../../components/Button';
 import '../../styles/main.css';
-import { authHeader, getUser, saveUser, StoredUser } from '../../services/api';
+import { saveUser } from '../../services/api';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
-type Profile = StoredUser & { avatarUrl?: string; preferences?: string[] };
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8081';
+type Profile = {
+  name: string;
+  gender?: string;
+  dob?: string; // yyyy-mm-dd
+  bio?: string;
+  tags?: string; // comma separated
+  avatarUrl?: string | null; // disabled feature
+  email?: string;
+};
 
 const SettingsPage: React.FC = () => {
-  const [profile, setProfile] = useState<Profile | null>(getUser() as Profile | null);
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [pwdOpen, setPwdOpen] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
-    // refresh from backend
-    fetch(`${API_BASE}/api/user/me`, { headers: { ...authHeader() } })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then((data: any) => {
-        const pref = typeof data.preferences === 'string' ? data.preferences.split(',').map((s: string) => s.trim()).filter(Boolean) : (data.preferences || []);
-        const merged: Profile = { ...(getUser() as any), ...data, preferences: pref } as Profile;
-        setProfile(merged);
-        saveUser({ name: merged.name, email: merged.email, avatarUrl: merged.avatarUrl });
-      })
-      .catch(() => {/* ignore if not logged */});
-  }, []);
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/login');
+        return;
+      }
 
-  const updateField = (k: keyof Profile, v: string) => setProfile(p => p ? { ...p, [k]: v } as Profile : p);
+      // Try to load profile row
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('display_name, gender, dob, bio, tags, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const next: Profile = {
+        name: p?.display_name || user.user_metadata?.name || user.email?.split('@')[0] || '',
+        gender: p?.gender || '',
+        dob: p?.dob || '',
+        bio: p?.bio || '',
+        tags: p?.tags || '',
+        avatarUrl: p?.avatar_url || null,
+        email: user.email || undefined,
+      };
+      setProfile(next);
+    };
+    load();
+  }, [router, supabase]);
+
+  const updateField = (k: keyof Profile, v: string) => setProfile(p => (p ? { ...p, [k]: v } : p));
 
   const onSave = async () => {
     if (!profile) return;
     setSaving(true); setStatus(null);
     try {
-      const res = await fetch(`${API_BASE}/api/user/me`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeader() },
-        body: JSON.stringify({
-          name: profile.name,
-          avatarUrl: profile.avatarUrl || '',
-          about: profile.about || '',
-          gender: profile.gender || '',
-          preferences: (profile.preferences || []).join(',')
-        })
-      });
-      if (!res.ok) throw new Error('Save failed');
-  saveUser({ name: profile.name, email: profile.email, avatarUrl: profile.avatarUrl });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // Upsert to profiles table
+      const payload = {
+        id: user.id,
+        display_name: profile.name,
+        gender: profile.gender || null,
+        dob: profile.dob || null,
+        bio: profile.bio || null,
+        tags: profile.tags || null,
+        avatar_url: null as string | null, // disabled for now
+        updated_at: new Date().toISOString(),
+      };
+      const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
+      if (error) throw error;
+
+      // Optionally cache in local storage for Navbar/Sidebar display
+      saveUser({ name: profile.name, email: profile.email || '' });
       setStatus('Saved');
     } catch (e: any) {
       setStatus(e.message || 'Save failed');
@@ -59,11 +92,29 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const onChangePassword = async () => {
+    setStatus(null);
+    if (!newPassword) return setStatus('Enter a new password');
+    if (newPassword !== confirmPassword) return setStatus('Passwords do not match');
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) setStatus(error.message);
+    else {
+      setStatus('Password updated');
+      setPwdOpen(false);
+      setNewPassword(''); setConfirmPassword('');
+    }
+  };
+
+  const onLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
+
   if (!profile) {
     return (
       <div className="app-container">
         <Navbar />
-        <div className="main-content"><Sidebar /><div className="content-area"><p>Please login to manage settings.</p></div></div>
+        <div className="main-content"><Sidebar /><div className="content-area"><p>Loading…</p></div></div>
       </div>
     );
   }
@@ -78,12 +129,15 @@ const SettingsPage: React.FC = () => {
           <div className="settings-card">
             <div className="settings-row">
               <div className="avatar-upload">
-                <img className="avatar-lg" src={profile.avatarUrl || 'https://i.pravatar.cc/120'} alt="avatar" />
-                <input type="url" placeholder="Avatar image URL" value={profile.avatarUrl || ''} onChange={e => updateField('avatarUrl', e.target.value)} />
+                {/* Default circle with no image */}
+                <div className="avatar-lg" style={{ background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+                <input type="text" placeholder="Avatar upload disabled" value="" disabled />
+                <small style={{ color: '#6b7280' }}>Avatar storage not configured. Using default.</small>
               </div>
               <div className="settings-fields">
-                <label>Display name</label>
+                <label>Username</label>
                 <input type="text" value={profile.name} onChange={e => updateField('name', e.target.value)} />
+
                 <label>Gender</label>
                 <select value={profile.gender || ''} onChange={e => updateField('gender', e.target.value)}>
                   <option value="">Select</option>
@@ -92,39 +146,39 @@ const SettingsPage: React.FC = () => {
                   <option>Non-binary</option>
                   <option>Prefer not to say</option>
                 </select>
-                <label>Blog preferences (comma separated)</label>
-                <input type="text" value={(profile.preferences || []).join(',')} onChange={e => updateField('preferences', e.target.value.split(',').map(s => s.trim()).filter(Boolean) as any)} />
+
+                <label>Date of birth</label>
+                <input type="date" value={profile.dob || ''} onChange={e => updateField('dob', e.target.value)} />
+
+                <label>Tags (comma separated)</label>
+                <input type="text" value={profile.tags || ''} onChange={e => updateField('tags', e.target.value)} placeholder="e.g., tech, life, tips" />
               </div>
             </div>
-            <label>About</label>
-            <textarea rows={5} value={profile.about || ''} onChange={e => updateField('about', e.target.value)} />
+
+            <label>Bio</label>
+            <textarea rows={5} value={profile.bio || ''} onChange={e => updateField('bio', e.target.value)} />
 
             <div className="editor-actions">
               <Button variant="secondary" onClick={() => setPwdOpen(v => !v)}>{pwdOpen ? 'Cancel' : 'Change Password'}</Button>
               <Button onClick={onSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
             </div>
             {status && <div className="auth-error" style={{ marginTop: '1rem' }}>{status}</div>}
+
             {pwdOpen && (
               <div style={{ marginTop: '1rem' }}>
-                <label>Current Password</label>
-                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
                 <label>New Password</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+                <label>Confirm Password</label>
+                <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                 <div className="editor-actions" style={{ justifyContent: 'flex-start' }}>
-                  <Button onClick={async () => {
-                    setStatus(null);
-                    try {
-                      const res = await fetch(`${API_BASE}/api/user/change-password`, {
-                        method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() },
-                        body: JSON.stringify({ currentPassword, newPassword })
-                      });
-                      if (!res.ok) throw new Error('Change password failed');
-                      setStatus('Password updated'); setPwdOpen(false); setCurrentPassword(''); setNewPassword('');
-                    } catch (e: any) { setStatus(e.message || 'Change password failed'); }
-                  }}>Update Password</Button>
+                  <Button onClick={onChangePassword}>Update Password</Button>
                 </div>
               </div>
             )}
+
+            <div className="editor-actions" style={{ marginTop: '1rem', justifyContent: 'flex-start' }}>
+              <Button variant="secondary" onClick={onLogout}>Log out</Button>
+            </div>
           </div>
         </div>
       </div>

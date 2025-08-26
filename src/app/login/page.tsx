@@ -73,6 +73,16 @@ const LoginPage: React.FC = () => {
             onChange={e => setPassword(e.target.value)} 
             required 
           />
+          <div style={{ marginTop: 6, marginBottom: 6, textAlign: 'right' }}>
+            <button
+              type="button"
+              className="link"
+              onClick={() => alert("This feature hasn't been made yet.")}
+              style={{ background: 'none', border: 'none', color: '#6b46c1', cursor: 'pointer', padding: 0 }}
+            >
+              Forgot password?
+            </button>
+          </div>
           <Button 
             type="submit" 
             className="auth-button" 

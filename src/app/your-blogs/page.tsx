@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/utils/supabase/server'
 import { deletePost } from '@/app/actions'
+import DeletePostButton from '@/components/DeletePostButton'
+import ToastFromSearchParam from '@/components/ToastFromSearchParam'
 
 // Module-scoped server action wrapper that returns void for <form action>
 export async function handleDelete(formData: FormData): Promise<void> {
@@ -33,6 +35,7 @@ const YourBlogsPage = async () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
+  <ToastFromSearchParam />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center pb-6 border-b border-gray-200 mb-8">
@@ -78,10 +81,7 @@ const YourBlogsPage = async () => {
                   <p className="text-sm text-gray-500 mb-4">{formatDate(post.created_at)}</p>
                   <div className="flex justify-between items-center">
                     <Link href={`/posts/${post.id}`} className="font-semibold text-purple-600 hover:text-purple-800">Read More →</Link>
-                    <form action={handleDelete}>
-                      <input type="hidden" name="postId" value={String(post.id)} />
-                      <button type="submit" className="text-sm font-medium text-red-500 hover:text-red-700">Delete</button>
-                    </form>
+                    <DeletePostButton postId={post.id} />
                   </div>
                 </div>
               </div>

@@ -8,6 +8,8 @@ import { IMAGES } from '../assets/images';
 import { getUser, type StoredUser } from '../services/api';
 import { createClient } from '@/utils/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
+import ToastFromSearchParam from '@/components/ToastFromSearchParam';
 
 export default function Page() {
   const router = useRouter();
@@ -77,6 +79,7 @@ export default function Page() {
   return (
     <div className="app-container">
       <Navbar />
+  <ToastFromSearchParam />
       <div className="main-content">
         <Sidebar />
         <div className="content-area">
@@ -137,7 +140,7 @@ export default function Page() {
             <h2 className="section-title">Latest blogs</h2>
             <div className="featured-grid">
         {(allBlogs.length ? allBlogs : myBlogs).slice(0, 8).map((b) => (
-                   <div key={b.id} className="blog-card">
+                   <Link key={b.id} href={`/posts/${b.id}`} className="blog-card" style={{ textDecoration: 'none' }}>
                      {b.imageUrl && (
                        <img src={b.imageUrl} alt="cover" style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 10, marginBottom: 8 }} />
                      )}
@@ -151,10 +154,10 @@ export default function Page() {
                     <p className="blog-excerpt">{b.content.length > 140 ? b.content.slice(0, 140) + '…' : b.content}</p>
                     <div className="tag-row">
           {b.tags?.split(',').filter(Boolean).slice(0, 3).map((t: string) => (
-                        <span key={t} className="tag">{t.trim()}</span>
+                        <span key={t} className="tag">#{t.trim()}</span>
                       ))}
                     </div>
-                  </div>
+                  </Link>
                 ))}
                 {!allBlogs.length && !myBlogs.length && (
                   <div style={{ background: '#fff', borderRadius: 12, padding: '1.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
@@ -179,32 +182,19 @@ export default function Page() {
           ) : (
             <div className="blog-feed">
               {myBlogs.map((b) => (
-                <div className="blog-post-card" key={b.id}>
+                 <div className="blog-post-card" key={b.id}>
                   {b.imageUrl && (
                     <img src={b.imageUrl} alt="cover" className="card-image" />
                   )}
                   <div className="card-content">
-                    <h3>{b.title}</h3>
+                    <h3 style={{ cursor: 'pointer' }} onClick={() => router.push(`/posts/${b.id}`)}>{b.title}</h3>
                     <p>{(b.content || '').slice(0, 160)}{(b.content || '').length > 160 ? '…' : ''}</p>
                     <div className="card-footer">
                       <span>{new Date(b.createdAt).toLocaleDateString()}</span>
-                      <span>{b.tags}</span>
+                      <span>{b.tags ? b.tags.split(',').filter(Boolean).map(t => `#${t.trim()}`).join(' ') : ''}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                      <button className="btn secondary" onClick={async () => {
-                        const title = prompt('Edit title', b.title);
-                        if (!title || !authUser) return;
-                        const { error } = await supabase
-                          .from('posts')
-                          .update({ title })
-                          .eq('id', b.id)
-                          .eq('user_id', authUser.id);
-                        if (!error) {
-                          setMyBlogs((prev) => prev.map(x => x.id === b.id ? { ...x, title } : x));
-                        } else {
-                          alert('Update failed: ' + error.message);
-                        }
-                      }}>Edit</button>
+                      <button className="btn secondary" onClick={() => router.push(`/posts/${b.id}/edit`)}>Edit</button>
                       <button className="btn secondary" onClick={async () => {
                         if (!confirm('Delete this post?') || !authUser) return;
                         const { error } = await supabase
