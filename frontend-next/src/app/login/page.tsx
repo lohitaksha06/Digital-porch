@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
   };
   return (
     <div className="auth-container">
-      <div className="auth-card">
+      <div className="auth-card" style={{ maxWidth: 560 }}>
         <h2>Welcome Back!</h2>
         <p>Please enter your details to sign in.</p>
         {error && <div className="auth-error">{error}</div>}
