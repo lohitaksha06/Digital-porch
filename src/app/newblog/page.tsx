@@ -18,7 +18,7 @@ const NewBlogPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState('google.com');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -46,8 +46,6 @@ const NewBlogPage: React.FC = () => {
       user_id: user.id,
       title: title,
       content: content,
-      image_url: imageUrl || null,
-      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
     };
 
     const { error: insertError } = await supabase.from('posts').insert(postData);

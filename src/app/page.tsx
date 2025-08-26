@@ -5,19 +5,72 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Button from '../components/Button';
 import { IMAGES } from '../assets/images';
-import { getUser, fetchMyBlogs, fetchAllBlogs, type Blog, type StoredUser } from '../services/api';
+import { getUser, type StoredUser } from '../services/api';
+import { createClient } from '@/utils/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Page() {
   const router = useRouter();
+  const supabase = createClient();
+  const { user: authUser } = useAuth();
+  type Blog = { id: number | string; title: string; content: string; tags?: string; createdAt: string; imageUrl?: string };
   const [myBlogs, setMyBlogs] = useState<Blog[]>([]);
   const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
   const [user, setUser] = useState<StoredUser | null>(null);
 
   useEffect(() => {
     setUser(getUser());
-    fetchMyBlogs().then(setMyBlogs).catch(() => setMyBlogs([]));
-    fetchAllBlogs().then(setAllBlogs).catch(() => setAllBlogs([]));
-  }, []);
+
+    // Fetch latest blogs from Supabase
+    const loadLatest = async () => {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('id, title, content, created_at')
+        .order('created_at', { ascending: false })
+        .limit(8);
+      if (!error && data) {
+        setAllBlogs(
+          data.map((p) => ({
+            id: p.id,
+            title: p.title,
+            content: p.content || '',
+            createdAt: p.created_at,
+          }))
+        );
+      } else {
+        setAllBlogs([]);
+      }
+    };
+
+    // Fetch blogs for the current logged-in user (if any)
+    const loadMine = async () => {
+      if (!authUser) {
+        setMyBlogs([]);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('posts')
+        .select('id, title, content, created_at')
+        .eq('user_id', authUser.id)
+        .order('created_at', { ascending: false });
+      if (!error && data) {
+        setMyBlogs(
+          data.map((p) => ({
+            id: p.id,
+            title: p.title,
+            content: p.content || '',
+            createdAt: p.created_at,
+          }))
+        );
+      } else {
+        setMyBlogs([]);
+      }
+    };
+
+    loadLatest();
+    loadMine();
+    // Re-run when auth user changes so "Your Blogs" updates after login/logout
+  }, [supabase, authUser]);
   
   const avatarInitial = (user?.name || 'B').trim().charAt(0).toUpperCase();
 
@@ -140,16 +193,30 @@ export default function Page() {
                     <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                       <button className="btn secondary" onClick={async () => {
                         const title = prompt('Edit title', b.title);
-                        if (!title) return;
-                        const { API_BASE, authHeader } = await import('../services/api');
-                        const res = await fetch(`${API_BASE}/api/blogs/${b.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeader() }, body: JSON.stringify({ title }) });
-                        if (res.ok) { const updated = await res.json(); setMyBlogs((prev) => prev.map(x => x.id === b.id ? updated : x)); } else { alert('Update failed'); }
+                        if (!title || !authUser) return;
+                        const { error } = await supabase
+                          .from('posts')
+                          .update({ title })
+                          .eq('id', b.id)
+                          .eq('user_id', authUser.id);
+                        if (!error) {
+                          setMyBlogs((prev) => prev.map(x => x.id === b.id ? { ...x, title } : x));
+                        } else {
+                          alert('Update failed: ' + error.message);
+                        }
                       }}>Edit</button>
                       <button className="btn secondary" onClick={async () => {
-                        if (!confirm('Delete this post?')) return;
-                        const { API_BASE, authHeader } = await import('../services/api');
-                        const res = await fetch(`${API_BASE}/api/blogs/${b.id}`, { method: 'DELETE', headers: { ...authHeader() } });
-                        if (res.ok || res.status === 204) { setMyBlogs((prev) => prev.filter(x => x.id !== b.id)); } else { alert('Delete failed'); }
+                        if (!confirm('Delete this post?') || !authUser) return;
+                        const { error } = await supabase
+                          .from('posts')
+                          .delete()
+                          .eq('id', b.id)
+                          .eq('user_id', authUser.id);
+                        if (!error) {
+                          setMyBlogs((prev) => prev.filter(x => x.id !== b.id));
+                        } else {
+                          alert('Delete failed: ' + error.message);
+                        }
                       }}>Delete</button>
                     </div>
                   </div>
