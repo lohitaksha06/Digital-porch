@@ -9,7 +9,7 @@ import '../../styles/auth.css';
 import { IMAGES } from '../../assets/images';
 
 // Import the Supabase client instance
-import { supabase } from '../../utils/supabase/client'; // Adjust this path if needed
+import { createClient } from '@/utils/supabase/client'; // Adjust this path if needed
 
 const SignupPage: React.FC = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const SignupPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const supabase = createClient();
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

@@ -8,7 +8,7 @@ import Button from '../../components/Button';
 import '../../styles/auth.css';
 
 // Import the Supabase client instance you created earlier
-import { supabase } from '../../utils/supabase/client'; // Adjust this path if needed
+import { createClient } from '@/utils/supabase/client'; // Adjust this path if needed
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
+  const supabase = createClient();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

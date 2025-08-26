@@ -1,17 +1,12 @@
 import Link from 'next/link';
 import '../../styles/main.css';
-import '../../styles/auth.css'; // You may not need this stylesheet anymore
-import styles from './Dashboard.module.css'; // We'll create this for custom styles
+import styles from './Dashboard.module.css'; 
+import { createClient } from '@/utils/supabase/server'; // Use the SERVER client
+import Navbar from '@/components/Navbar'; // Add a Navbar for consistency
 
-// Import a server-side Supabase client. You'll need to create this helper.
-// See instructions below.
-import { createClient } from '@/utils/supabase/server'; 
-
-// This component is now an async Server Component
 const DashboardPage = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
-  // Fetch all posts, ordered by the newest first
   const { data: posts, error } = await supabase
     .from('posts')
     .select(`
@@ -24,45 +19,47 @@ const DashboardPage = async () => {
     `)
     .order('created_at', { ascending: false });
 
-  if (error) {
-    return <p className={styles.error}>Could not fetch posts. Please try again later.</p>;
-  }
-
   return (
-    <div className={styles.dashboardContainer}>
-      <div className={styles.header}>
-        <h1>Explore Stories</h1>
-        <Link href="/newblog" className={styles.newPostButton}>
-          + Create New Post
-        </Link>
-      </div>
-      
-      {posts.length === 0 ? (
-        <div className={styles.noPosts}>
-          <h2>No stories yet.</h2>
-          <p>Be the first to share your thoughts!</p>
+    <div className="app-container">
+      <Navbar />
+      <div className={styles.dashboardContainer}>
+        <div className={styles.header}>
+          <h1>Explore Stories</h1>
+          <Link href="/newblog" className={styles.newPostButton}>
+            + Create New Post
+          </Link>
         </div>
-      ) : (
-        <div className={styles.postsGrid}>
-          {posts.map((post) => (
-            <div key={post.id} className={styles.postCard}>
-              {post.image_url && <img src={post.image_url} alt={post.title} className={styles.postImage} />}
-              <div className={styles.cardContent}>
-                <h2 className={styles.postTitle}>{post.title}</h2>
-                <p className={styles.postAuthor}>By {post.profiles?.full_name || 'Anonymous'}</p>
-                <p className={styles.postSnippet}>
-                  {post.content ? post.content.substring(0, 100) + '...' : ''}
-                </p>
-                <p className={styles.postDate}>
-                  {new Date(post.created_at).toLocaleDateString()}
-                </p>
-                {/* This link will eventually go to a detailed post page */}
-                <Link href={`/posts/${post.id}`} className={styles.readMore}>Read More</Link>
+        
+        {error && <p className={styles.error}>Could not fetch posts.</p>}
+
+        {posts && posts.length === 0 && (
+          <div className={styles.noPosts}>
+            <h2>No stories yet. Be the first to share!</h2>
+          </div>
+        )}
+
+        {posts && (
+          <div className={styles.postsGrid}>
+            {posts.map((post) => (
+              <div key={post.id} className={styles.postCard}>
+                {post.image_url && <img src={post.image_url} alt={post.title} className={styles.postImage} />}
+                <div className={styles.cardContent}>
+                  <h2 className={styles.postTitle}>{post.title}</h2>
+                  <p className={styles.postAuthor}>By {'Anonymous'}</p>
+                  <p className={styles.postSnippet}>
+                    {post.content ? post.content.substring(0, 100) + '...' : ''}
+                  </p>
+                  <p className={styles.postDate}>
+                    {new Date(post.created_at).toLocaleDateString()}
+                  </p>
+                  {/* This link will eventually go to a detailed post page */}
+                  <Link href={`/posts/${post.id}`} className={styles.readMore}>Read More</Link>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
