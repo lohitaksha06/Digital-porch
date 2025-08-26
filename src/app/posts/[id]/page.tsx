@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/utils/supabase/server'
 import ToastFromSearchParam from '@/components/ToastFromSearchParam'
+import { Suspense } from 'react'
 
 type PageProps = { params: { id: string } }
 
@@ -45,7 +46,9 @@ const PostDetailPage = async ({ params }: PageProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-  <ToastFromSearchParam />
+      <Suspense fallback={null}>
+        <ToastFromSearchParam />
+      </Suspense>
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="text-purple-600 hover:text-purple-800">← Back</Link>

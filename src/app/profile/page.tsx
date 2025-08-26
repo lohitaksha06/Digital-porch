@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import Navbar from "@/components/Navbar";
 import '../../styles/main.css';
 import Link from 'next/link'
+import Sidebar from '@/components/Sidebar'
 
 type Post = { id: string | number; title: string; content: string; created_at: string };
 
@@ -18,7 +19,7 @@ const ProfilePage = () => {
 
   const [displayName, setDisplayName] = useState<string>('');
   const [bio, setBio] = useState<string>('');
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  // No avatar stored; always use a dummy circle
   const [posts, setPosts] = useState<Post[]>([]);
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [mutualsCount, setMutualsCount] = useState<number>(0);
@@ -36,12 +37,11 @@ const ProfilePage = () => {
       // Load profile
       const { data: prof } = await supabase
         .from('profiles')
-        .select('display_name, bio, avatar_url')
+        .select('display_name, bio')
         .eq('id', user.id)
         .maybeSingle();
       setDisplayName(prof?.display_name || user.user_metadata?.name || user.email?.split('@')[0] || '');
       setBio(prof?.bio || '');
-      setAvatarUrl(prof?.avatar_url || null);
 
       // Load posts by this user
       const { data: p } = await supabase
@@ -80,19 +80,16 @@ const ProfilePage = () => {
   if (!user) return null;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="app-container">
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="main-content">
+        <Sidebar />
+        <div className="content-area">
+          <div className="max-w-4xl mx-auto py-6">
         {/* Avatar Center */}
         <div className="flex flex-col items-center">
-          <div className="relative">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="avatar" className="rounded-full" style={{ width: 120, height: 120, objectFit: 'cover' }} />
-            ) : (
-              <div className="rounded-full bg-gray-200 flex items-center justify-center" style={{ width: 120, height: 120 }}>
-                <span className="text-3xl text-gray-600">{avatarFallback}</span>
-              </div>
-            )}
+          <div className="rounded-full bg-gray-200 flex items-center justify-center" style={{ width: 120, height: 120 }}>
+            <span className="text-3xl text-gray-600">{avatarFallback}</span>
           </div>
           <h1 className="mt-4 text-2xl font-bold text-gray-900">{displayName}</h1>
           <p className="text-sm text-gray-500">{user.email}</p>
@@ -102,8 +99,8 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Bio */}
-        <section className="mt-8">
+  {/* Bio */}
+  <section className="mt-8">
           <h2 className="text-lg font-semibold text-gray-900">Bio</h2>
           <p className="mt-2 text-gray-700 whitespace-pre-wrap">{bio || 'No bio yet.'}</p>
         </section>
@@ -144,7 +141,9 @@ const ProfilePage = () => {
             <div className="text-gray-600">No blogs yet. <Link href="/newblog" className="text-purple-600">Write your first one.</Link></div>
           )}
         </section>
-      </main>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

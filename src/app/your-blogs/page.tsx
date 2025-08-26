@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/server'
 import { deletePost } from '@/app/actions'
 import DeletePostButton from '@/components/DeletePostButton'
 import ToastFromSearchParam from '@/components/ToastFromSearchParam'
+import { Suspense } from 'react'
 
 // Module-scoped server action wrapper that returns void for <form action>
 export async function handleDelete(formData: FormData): Promise<void> {
@@ -35,7 +36,9 @@ const YourBlogsPage = async () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
-  <ToastFromSearchParam />
+      <Suspense fallback={null}>
+        <ToastFromSearchParam />
+      </Suspense>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center pb-6 border-b border-gray-200 mb-8">

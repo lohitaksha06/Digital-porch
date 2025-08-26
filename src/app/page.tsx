@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -79,7 +79,9 @@ export default function Page() {
   return (
     <div className="app-container">
       <Navbar />
-  <ToastFromSearchParam />
+      <Suspense fallback={null}>
+        <ToastFromSearchParam />
+      </Suspense>
       <div className="main-content">
         <Sidebar />
         <div className="content-area">

@@ -1,11 +1,26 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { FaHome, FaCompass, FaUser, FaCog, FaEnvelope, FaPlus } from 'react-icons/fa';
+import { FaHome, FaCompass, FaUser, FaCog, FaEnvelope, FaPlus, FaMoon, FaSun } from 'react-icons/fa';
 import '../styles/main.css';
 import { getUser } from '../services/api';
+import { useEffect, useState } from 'react';
 
 const Sidebar: React.FC = () => {
+  const [theme, setTheme] = React.useState<'light' | 'dark'>(() => {
+    if (typeof document === 'undefined') return 'light';
+    const saved = localStorage.getItem('dp_theme') as 'light' | 'dark' | null;
+    return saved || 'light';
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    localStorage.setItem('dp_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+
   return (
     <aside className="sidebar">
       <div className="sidebar-menu">
@@ -31,6 +46,10 @@ const Sidebar: React.FC = () => {
         </Link>
       </div>
       <div className="sidebar-menu">
+        <button className="menu-item" onClick={toggleTheme} style={{ background: 'transparent', border: 'none' }}>
+          {theme === 'dark' ? <FaSun className="icon" /> : <FaMoon className="icon" />}
+          <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
         {getUser()?.name && (
           <div className="sidebar-username-row">
             {(() => { const u = getUser(); const src = u?.avatarDataUrl || u?.avatarUrl; 
