@@ -46,6 +46,8 @@ const NewBlogPage: React.FC = () => {
       user_id: user.id,
       title: title,
       content: content,
+  // Ensure every post has a timestamp even if DB default isn't set
+  created_at: new Date().toISOString(),
     };
 
     const { error: insertError } = await supabase.from('posts').insert(postData);
