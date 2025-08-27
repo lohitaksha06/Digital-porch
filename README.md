@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Digital Porch — Mini Blogging Platform
 
-## Getting Started
+Next.js (App Router) + Supabase powered micro‑blogging app. Users can sign up, write posts, and manage profiles with a clean light/dark UI.
 
-First, run the development server:
+### Features
+- Auth: email sign up/sign in (Supabase Auth).
+- Posts: create, edit, delete. Each post has title, content, and created_at timestamp.
+- Lists: Home shows Latest Blogs and Your Blogs; Profile lists your posts.
+- Post pages: view at `/posts/[id]`, edit at `/posts/[id]/edit`.
+- Tags: simple comma input rendered as #tags.
+- Safe delete: confirmation modal + success toasts.
+- Settings: display name, gender, DOB, bio, tags, change password, logout.
+- Theming: light/dark toggle in Sidebar with persistence.
+- Messages page: placeholder popup (“under construction”).
 
+### Tech
+- Next.js 15, React 19, TypeScript
+- Supabase JS v2 with `@supabase/ssr` (browser/server clients)
+- CSS custom properties for theming
+
+## Setup
+Prereqs: Node 18+, pnpm.
+
+1) Install deps
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2) Env vars: create `.env.local` in the project root
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3) Database (Supabase)
+- Create a `posts` table with columns: `id` uuid (default gen), `user_id` uuid, `title` text, `content` text, `created_at` timestamp with time zone default now().
+- Optional: `profiles` table for user metadata (display_name, gender, dob, bio, tags) keyed by auth uid.
+- Enable RLS with policies to allow owners to read/write their own posts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Note: The app also sets `created_at` on insert in code to guarantee a timestamp.
 
-## Learn More
+## Run
+Dev server:
+```bash
+pnpm dev
+```
+Open http://localhost:3000
 
-To learn more about Next.js, take a look at the following resources:
+Build (for Vercel/local preview):
+```bash
+pnpm build
+pnpm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
+Deploy to Vercel. Set the same env vars in your Vercel Project → Settings → Environment Variables.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure (high level)
+- `src/app` — routes and pages (App Router)
+- `src/components` — UI components
+- `src/utils/supabase` — browser/server Supabase clients
+- `src/styles` — global styles and theme tokens
